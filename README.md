@@ -4,11 +4,7 @@
 
 ## 線上瀏覽
 
-啟用 GitHub Pages 後即可透過以下網址查看：
-
-```
-https://<你的帳號>.github.io/<repo 名稱>/
-```
+👉 **https://rinilin.github.io/korea-trip/**
 
 ## 行程亮點
 
