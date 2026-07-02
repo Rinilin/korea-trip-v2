@@ -108,6 +108,7 @@
     letter-spacing:.04em;margin-bottom:4px;
   }
   .place{font-weight:700;font-size:1.05rem}
+  .note{color:var(--muted);font-size:.82rem;margin-top:3px;line-height:1.5}
   .tag{
     display:inline-block;margin-top:6px;font-size:.75rem;letter-spacing:.05em;
     padding:2px 10px;border-radius:999px;color:var(--muted);
@@ -140,7 +141,8 @@ function weekOf(dateStr){
   return "星期" + WEEK[new Date(y, m-1, d).getDay()];
 }
 function classify(name){
-  if(/機場|Airport|Terminal/.test(name)) return {cls:"flight", label:"✈️ 機場 / 航廈"};
+  if(/✈|IT60/.test(name)) return {cls:"flight", label:"✈️ 航班"};
+  if(/機場|Airport|Terminal/.test(name)) return {cls:"flight", label:"🛫 機場 / 航廈"};
   if(/旅館|Hostel|Hotel|膠囊/.test(name)) return {cls:"stay", label:"🛏️ 住宿"};
   if(/DOME|Arena|體操競技場|esports|首爾塔|世界|Zoolung|Cafe|Hetras/.test(name))
     return {cls:"event", label:"📍 景點 / 活動"};
@@ -149,10 +151,11 @@ function classify(name){
 
 const DATA = [
   {date:"2026/08/12", stops:[
-    ["19:30","臺灣桃園國際機場"],
+    ["17:00","桃園國際機場 · 報到","第一航廈 T1｜提前 3 小時抵達機場"],
+    ["20:00","IT602 ✈ 桃園 TPE → 仁川 ICN","虎航 tigerair｜20:00 起飛 → 23:30 抵達"],
+    ["23:30","仁川國際機場 · 抵達","第一航廈 T1"],
   ]},
   {date:"2026/08/13", stops:[
-    ["00:30","仁川國際機場"],
     ["01:35","Darakhyu 膠囊旅館（仁川國際機場第二航廈）"],
     ["08:00","Incheon Airport Terminal 2"],
     ["10:53","K-Grand Hostel（DDM, Wangsimni）"],
@@ -185,11 +188,11 @@ const DATA = [
   {date:"2026/08/18", stops:[
     ["00:00","K-Grand Hostel（DDM, Wangsimni）"],
     ["11:33","樂天世界購物中心"],
-    ["20:30","仁川國際機場"],
+    ["21:30","仁川國際機場 · 報到","第一航廈 T1｜提前 3 小時（航班 00:30 起飛）"],
   ]},
   {date:"2026/08/19", stops:[
-    ["00:00","仁川國際機場"],
-    ["02:30","臺灣桃園國際機場"],
+    ["00:30","IT603 ✈ 仁川 ICN → 桃園 TPE","虎航 tigerair｜00:30 起飛 → 02:15 抵達"],
+    ["02:15","桃園國際機場 · 抵達","第一航廈 T1 · 回到台灣 🇹🇼"],
   ]},
 ];
 
@@ -214,13 +217,14 @@ DATA.forEach((day, i) => {
       <span class="day-week">${weekOf(day.date)}</span>
     </div>
     <div class="timeline">
-      ${day.stops.map(([t,name])=>{
+      ${day.stops.map(([t,name,note])=>{
         const c = classify(name);
         return `<div class="stop">
           <div class="dot"></div>
           <div class="card">
             <div class="time">${t}</div>
             <div class="place">${name}</div>
+            ${note ? `<div class="note">${note}</div>` : ""}
             <span class="tag ${c.cls}">${c.label}</span>
           </div>
         </div>`;
