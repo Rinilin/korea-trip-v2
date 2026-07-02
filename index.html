@@ -111,6 +111,20 @@
   .note{color:var(--muted);font-size:.82rem;margin-top:3px;line-height:1.5}
   .map{width:100%;height:190px;border:0;border-radius:10px;margin-top:10px;display:block;filter:saturate(.95)}
   .map.route{height:170px}
+  .mapbox{margin-top:10px}
+  .maptoggle{
+    display:inline-block;cursor:pointer;list-style:none;user-select:none;
+    font-size:.8rem;font-weight:700;letter-spacing:.03em;
+    padding:4px 14px;border-radius:999px;
+    color:var(--accent);background:rgba(196,139,139,.1);
+    border:1px solid rgba(196,139,139,.45);transition:all .15s ease;
+  }
+  .maptoggle::-webkit-details-marker{display:none}
+  .maptoggle::after{content:"▾";margin-left:5px;opacity:.7;font-size:.75em}
+  details[open] > .maptoggle::after{content:"▴"}
+  .maptoggle:hover{background:var(--accent);color:#fff;border-color:transparent}
+  .maptoggle.route{color:var(--accent2);background:rgba(179,160,172,.12);border-color:rgba(179,160,172,.5)}
+  .maptoggle.route:hover{background:var(--accent2);color:#fff;border-color:transparent}
   .maps{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
   .maplink{
     display:inline-block;font-size:.78rem;letter-spacing:.03em;
@@ -153,11 +167,14 @@ function shortName(n){
   return n.replace(/（[^）]*）/g,"").replace(/\s*·.*$/,"").trim();
 }
 function placeCard(t,name,note,q){
-  const emb = q ? `<iframe class="map" loading="lazy" src="https://www.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed"></iframe>
-      <div class="maps">
-        ${!/桃園|TPE/.test(q) ? `<a class="maplink naver" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : ""}
-        <a class="maplink google" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Google</a>
-      </div>` : "";
+  const emb = q ? `<details class="mapbox">
+        <summary class="maptoggle">🗺️ 地圖</summary>
+        <iframe class="map" loading="lazy" src="https://www.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed"></iframe>
+        <div class="maps">
+          ${!/桃園|TPE/.test(q) ? `<a class="maplink naver" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">Naver 開啟</a>` : ""}
+          <a class="maplink google" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">Google 開啟</a>
+        </div>
+      </details>` : "";
   return `<div class="stop">
         <div class="dot"></div>
         <div class="card">
@@ -173,10 +190,13 @@ function moveCard(fromName,toName,fromQ,toQ){
         <div class="dot move"></div>
         <div class="card move">
           <div class="move-title">🚇 移動 · ${shortName(fromName)} → ${shortName(toName)}</div>
-          <iframe class="map route" loading="lazy" src="https://maps.google.com/maps?saddr=${encodeURIComponent(fromQ)}&daddr=${encodeURIComponent(toQ)}&dirflg=r&output=embed"></iframe>
-          <div class="maps">
-            <a class="maplink google" href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(fromQ)}&destination=${encodeURIComponent(toQ)}&travelmode=transit" target="_blank" rel="noopener">🗺️ 路線導航</a>
-          </div>
+          <details class="mapbox">
+            <summary class="maptoggle route">🗺️ 路線圖</summary>
+            <iframe class="map route" loading="lazy" src="https://maps.google.com/maps?saddr=${encodeURIComponent(fromQ)}&daddr=${encodeURIComponent(toQ)}&dirflg=r&output=embed"></iframe>
+            <div class="maps">
+              <a class="maplink google" href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(fromQ)}&destination=${encodeURIComponent(toQ)}&travelmode=transit" target="_blank" rel="noopener">路線導航</a>
+            </div>
+          </details>
         </div>
       </div>`;
 }
