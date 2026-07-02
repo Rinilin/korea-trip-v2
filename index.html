@@ -109,6 +109,8 @@
   }
   .place{font-weight:700;font-size:1.05rem}
   .note{color:var(--muted);font-size:.82rem;margin-top:3px;line-height:1.5}
+  .map{width:100%;height:190px;border:0;border-radius:10px;margin-top:10px;display:block;filter:saturate(.95)}
+  .map.route{height:170px}
   .maps{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
   .maplink{
     display:inline-block;font-size:.78rem;letter-spacing:.03em;
@@ -119,6 +121,11 @@
   .maplink.google:hover{background:var(--accent);color:#fff;border-color:transparent}
   .maplink.naver{color:#5f8c6c;background:rgba(122,160,130,.12);border:1px solid rgba(122,160,130,.5)}
   .maplink.naver:hover{background:#7a9a80;color:#fff;border-color:transparent}
+
+  .stop.move{padding-top:2px;padding-bottom:2px}
+  .dot.move{width:12px;height:12px;left:2px;top:20px;border-color:var(--accent2);box-shadow:0 0 0 4px rgba(179,160,172,.15)}
+  .card.move{background:rgba(179,160,172,.09);border-style:dashed}
+  .move-title{font-weight:700;font-size:.9rem;color:var(--accent2);letter-spacing:.02em}
 
   footer{text-align:center;color:var(--muted);margin-top:60px;font-size:.85rem}
   footer .heart{color:var(--accent)}
@@ -141,6 +148,47 @@ const WEEK = ["日","一","二","三","四","五","六"];
 function weekOf(dateStr){
   const [y,m,d] = dateStr.split("/").map(Number);
   return "星期" + WEEK[new Date(y, m-1, d).getDay()];
+}
+function shortName(n){
+  return n.replace(/（[^）]*）/g,"").replace(/\s*·.*$/,"").trim();
+}
+function placeCard(t,name,note,q){
+  const emb = q ? `<iframe class="map" loading="lazy" src="https://www.google.com/maps?q=${encodeURIComponent(q)}&z=15&output=embed"></iframe>
+      <div class="maps">
+        ${!/桃園|TPE/.test(q) ? `<a class="maplink naver" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : ""}
+        <a class="maplink google" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Google</a>
+      </div>` : "";
+  return `<div class="stop">
+        <div class="dot"></div>
+        <div class="card">
+          <div class="time">${t}</div>
+          <div class="place">${name}</div>
+          ${note ? `<div class="note">${note}</div>` : ""}
+          ${emb}
+        </div>
+      </div>`;
+}
+function moveCard(fromName,toName,fromQ,toQ){
+  return `<div class="stop move">
+        <div class="dot move"></div>
+        <div class="card move">
+          <div class="move-title">🚇 移動 · ${shortName(fromName)} → ${shortName(toName)}</div>
+          <iframe class="map route" loading="lazy" src="https://maps.google.com/maps?saddr=${encodeURIComponent(fromQ)}&daddr=${encodeURIComponent(toQ)}&dirflg=r&output=embed"></iframe>
+          <div class="maps">
+            <a class="maplink google" href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(fromQ)}&destination=${encodeURIComponent(toQ)}&travelmode=transit" target="_blank" rel="noopener">🗺️ 路線導航</a>
+          </div>
+        </div>
+      </div>`;
+}
+function renderStops(stops){
+  let out = "";
+  stops.forEach((s,idx)=>{
+    const [t,name,note,q] = s;
+    out += placeCard(t,name,note,q);
+    const nx = stops[idx+1];
+    if(nx && q && nx[3] && q!==nx[3]) out += moveCard(name, nx[1], q, nx[3]);
+  });
+  return out;
 }
 const HOSTEL = "K-Grand Hostel Seoul Dongdaemun";
 const ICN_T1 = "인천국제공항 제1여객터미널";
@@ -215,20 +263,7 @@ DATA.forEach((day, i) => {
       <span class="day-week">${weekOf(day.date)}</span>
     </div>
     <div class="timeline">
-      ${day.stops.map(([t,name,note,map])=>{
-        return `<div class="stop">
-          <div class="dot"></div>
-          <div class="card">
-            <div class="time">${t}</div>
-            <div class="place">${name}</div>
-            ${note ? `<div class="note">${note}</div>` : ""}
-            ${map ? `<div class="maps">
-              ${!/桃園|TPE/.test(map) ? `<a class="maplink naver" href="https://map.naver.com/p/search/${encodeURIComponent(map)}" target="_blank" rel="noopener">🗺️ Naver</a>` : ""}
-              <a class="maplink google" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(map)}" target="_blank" rel="noopener">🗺️ Google</a>
-            </div>` : ""}
-          </div>
-        </div>`;
-      }).join("")}
+      ${renderStops(day.stops)}
     </div>`;
   root.appendChild(sec);
   sections.push(sec);
