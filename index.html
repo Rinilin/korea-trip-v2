@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>韓國行 · 2026 首爾之旅</title>
+<style>
+  :root{
+    --bg:#0f1020;
+    --bg2:#1a1b3a;
+    --card:rgba(255,255,255,.06);
+    --card-border:rgba(255,255,255,.12);
+    --accent:#ff4d6d;
+    --accent2:#5b8cff;
+    --text:#f2f3ff;
+    --muted:#a9adcf;
+    --line:rgba(255,255,255,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Noto Sans TC","Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(1200px 600px at 10% -10%,rgba(91,140,255,.25),transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%,rgba(255,77,109,.22),transparent 55%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+    min-height:100vh;
+    line-height:1.6;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 80px}
+
+  header{
+    text-align:center;
+    padding:70px 20px 40px;
+  }
+  .flag{font-size:2.6rem;letter-spacing:.3em}
+  header h1{
+    font-size:clamp(2.1rem,7vw,3.4rem);
+    font-weight:800;
+    letter-spacing:.04em;
+    margin:.3em 0 .2em;
+    background:linear-gradient(90deg,#fff,#ffd0da,#c9d7ff);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  header .sub{color:var(--muted);font-size:1.05rem;letter-spacing:.08em}
+  header .dates{
+    display:inline-block;margin-top:18px;padding:8px 20px;
+    border:1px solid var(--card-border);border-radius:999px;
+    background:var(--card);font-size:.95rem;color:var(--text);
+    backdrop-filter:blur(6px);
+  }
+
+  .stats{
+    display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+    margin:26px 0 10px;
+  }
+  .stat{
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:16px;padding:14px 22px;min-width:90px;text-align:center;
+    backdrop-filter:blur(6px);
+  }
+  .stat b{display:block;font-size:1.6rem;font-weight:800}
+  .stat span{color:var(--muted);font-size:.8rem;letter-spacing:.1em}
+
+  .day{margin-top:44px}
+  .day-head{
+    display:flex;align-items:baseline;gap:14px;
+    position:sticky;top:0;z-index:5;
+    padding:14px 4px;
+    background:linear-gradient(180deg,rgba(15,16,32,.92),rgba(15,16,32,.55));
+    backdrop-filter:blur(8px);
+  }
+  .day-num{
+    font-size:1.5rem;font-weight:800;color:var(--accent);
+    letter-spacing:.05em;white-space:nowrap;
+  }
+  .day-date{color:var(--muted);font-size:.95rem;font-weight:600}
+  .day-week{color:var(--muted);font-size:.85rem;margin-left:auto}
+
+  .timeline{position:relative;padding-left:8px;margin-top:6px}
+  .timeline::before{
+    content:"";position:absolute;left:70px;top:8px;bottom:8px;width:2px;
+    background:linear-gradient(180deg,var(--accent),var(--accent2));
+    opacity:.4;
+  }
+  .stop{
+    position:relative;display:grid;grid-template-columns:62px 1fr;
+    gap:18px;padding:10px 0;align-items:start;
+  }
+  .time{
+    text-align:right;font-variant-numeric:tabular-nums;
+    font-weight:700;font-size:1rem;color:var(--text);padding-top:12px;
+  }
+  .dot{
+    position:absolute;left:63px;top:16px;width:16px;height:16px;border-radius:50%;
+    background:var(--bg2);border:3px solid var(--accent);z-index:2;
+    box-shadow:0 0 0 4px rgba(255,77,109,.12);
+  }
+  .card{
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:14px;padding:13px 16px;margin-left:14px;
+    backdrop-filter:blur(6px);transition:transform .15s ease,border-color .15s ease;
+  }
+  .card:hover{transform:translateX(3px);border-color:var(--accent)}
+  .place{font-weight:700;font-size:1.05rem}
+  .tag{
+    display:inline-block;margin-top:6px;font-size:.75rem;letter-spacing:.05em;
+    padding:2px 10px;border-radius:999px;color:var(--muted);
+    background:rgba(255,255,255,.06);border:1px solid var(--card-border);
+  }
+  .tag.flight{color:#ffd0da;border-color:rgba(255,77,109,.4)}
+  .tag.stay{color:#c9d7ff;border-color:rgba(91,140,255,.4)}
+  .tag.event{color:#ffe6a0;border-color:rgba(255,214,120,.4)}
+
+  footer{text-align:center;color:var(--muted);margin-top:60px;font-size:.85rem}
+  footer .heart{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="flag">🇰🇷</div>
+    <h1>韓國行</h1>
+    <div class="sub">SEOUL · 首爾之旅</div>
+    <div class="dates">2026 / 08 / 12 &nbsp;–&nbsp; 08 / 19</div>
+    <div class="stats">
+      <div class="stat"><b>8</b><span>DAYS 天</span></div>
+      <div class="stat"><b>7</b><span>NIGHTS 晚</span></div>
+      <div class="stat"><b>🎤</b><span>KSPO DOME</span></div>
+    </div>
+  </header>
+
+  <main id="itinerary"></main>
+
+  <footer>
+    <p>祝旅途愉快 · Have a wonderful trip <span class="heart">♥</span></p>
+  </footer>
+</div>
+
+<script>
+const WEEK = ["日","一","二","三","四","五","六"];
+function weekOf(dateStr){
+  const [y,m,d] = dateStr.split("/").map(Number);
+  return "星期" + WEEK[new Date(y, m-1, d).getDay()];
+}
+function classify(name){
+  if(/機場|Airport|Terminal/.test(name)) return {cls:"flight", label:"✈️ 機場 / 航廈"};
+  if(/旅館|Hostel|Hotel|膠囊/.test(name)) return {cls:"stay", label:"🛏️ 住宿"};
+  if(/DOME|Arena|體操競技場|esports|首爾塔|世界|Zoolung|Cafe|Hetras/.test(name))
+    return {cls:"event", label:"📍 景點 / 活動"};
+  return {cls:"", label:"📍 地點"};
+}
+
+const DATA = [
+  {date:"2026/08/12", stops:[
+    ["19:30","臺灣桃園國際機場"],
+  ]},
+  {date:"2026/08/13", stops:[
+    ["00:30","仁川國際機場"],
+    ["01:35","Darakhyu 膠囊旅館（仁川國際機場第二航廈）"],
+    ["08:00","Incheon Airport Terminal 2"],
+    ["10:53","K-Grand Hostel（DDM, Wangsimni）"],
+    ["11:36","Gen.G esports"],
+    ["11:56","T1 Cafe & Arena"],
+    ["13:25","Hetras 聖水洞"],
+    ["17:15","K-Grand Hostel（DDM, Wangsimni）"],
+  ]},
+  {date:"2026/08/14", stops:[
+    ["00:00","K-Grand Hostel（DDM, Wangsimni）"],
+    ["10:38","首爾奧林匹克體操競技場 KSPO DOME"],
+    ["22:38","K-Grand Hostel（DDM, Wangsimni）"],
+  ]},
+  {date:"2026/08/15", stops:[
+    ["00:00","K-Grand Hostel（DDM, Wangsimni）"],
+    ["10:38","首爾奧林匹克體操競技場 KSPO DOME"],
+    ["22:38","K-Grand Hostel（DDM, Wangsimni）"],
+  ]},
+  {date:"2026/08/16", stops:[
+    ["00:00","K-Grand Hostel（DDM, Wangsimni）"],
+    ["10:38","首爾奧林匹克體操競技場 KSPO DOME"],
+    ["22:38","K-Grand Hostel（DDM, Wangsimni）"],
+  ]},
+  {date:"2026/08/17", stops:[
+    ["00:00","K-Grand Hostel（DDM, Wangsimni）"],
+    ["10:41","首爾塔"],
+    ["12:29","Zoolung Zoolung"],
+    ["14:15","K-Grand Hostel（DDM, Wangsimni）"],
+  ]},
+  {date:"2026/08/18", stops:[
+    ["00:00","K-Grand Hostel（DDM, Wangsimni）"],
+    ["11:33","樂天世界購物中心"],
+    ["20:30","仁川國際機場"],
+  ]},
+  {date:"2026/08/19", stops:[
+    ["00:00","仁川國際機場"],
+    ["02:30","臺灣桃園國際機場"],
+  ]},
+];
+
+const root = document.getElementById("itinerary");
+DATA.forEach((day, i) => {
+  const sec = document.createElement("section");
+  sec.className = "day";
+  sec.innerHTML = `
+    <div class="day-head">
+      <span class="day-num">第 ${i+1} 天</span>
+      <span class="day-date">${day.date.replaceAll("/", " / ")}</span>
+      <span class="day-week">${weekOf(day.date)}</span>
+    </div>
+    <div class="timeline">
+      ${day.stops.map(([t,name])=>{
+        const c = classify(name);
+        return `<div class="stop">
+          <div class="time">${t}</div>
+          <div class="dot"></div>
+          <div class="card">
+            <div class="place">${name}</div>
+            <span class="tag ${c.cls}">${c.label}</span>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`;
+  root.appendChild(sec);
+});
+</script>
+</body>
+</html>
