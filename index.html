@@ -131,7 +131,7 @@
 
   .stop.move{padding-top:2px;padding-bottom:2px}
   .dot.move{width:12px;height:12px;left:2px;top:20px;border-color:var(--accent2);box-shadow:0 0 0 4px rgba(179,160,172,.15)}
-  .card.move{background:rgba(179,160,172,.09);border-style:dashed}
+  .card.move{background:rgba(181,166,178,.32);border:1px dashed rgba(150,132,145,.55)}
   .move-title{font-weight:700;font-size:.9rem;color:var(--accent2);letter-spacing:.02em}
 
   footer{text-align:center;color:var(--muted);margin-top:60px;font-size:.85rem}
@@ -174,9 +174,10 @@ function toggleMap(btn){
 }
 function placeCard(t,name,note,q,hideMap){
   const enc = encodeURIComponent;
+  const naver = /桃園|Taoyuan|TPE/.test(q) ? "" : `<a class="btn naver" href="https://map.naver.com/p/search/${enc(q)}" target="_blank" rel="noopener">Naver 地圖</a>`;
   const box = (q && !hideMap) ? `<div class="actions">
             <button class="btn maptoggle" onclick="toggleMap(this)">🗺️ 地圖</button>
-            <a class="btn naver" href="https://map.naver.com/p/search/${enc(q)}" target="_blank" rel="noopener">Naver 地圖</a>
+            ${naver}
           </div>
           <div class="mappanel" hidden>
             <iframe class="map" data-src="https://www.google.com/maps?q=${enc(q)}&z=15&output=embed" loading="lazy"></iframe>
@@ -201,7 +202,6 @@ function moveCard(fromName,toName,fromQ,toQ,routeText){
           ${routeText ? `<div class="route-note">${routeText}</div>` : ""}
           <div class="actions">
             <button class="btn maptoggle route" onclick="toggleMap(this)">🗺️ 路線圖</button>
-            <a class="btn google" href="https://www.google.com/maps/dir/?api=1&origin=${enc(fromQ)}&destination=${enc(toQ)}&travelmode=transit" target="_blank" rel="noopener">路線導航</a>
           </div>
           <div class="mappanel" hidden>
             <iframe class="map route" data-src="https://maps.google.com/maps?saddr=${enc(fromQ)}&daddr=${enc(toQ)}&dirflg=r&output=embed" loading="lazy"></iframe>
@@ -211,17 +211,17 @@ function moveCard(fromName,toName,fromQ,toQ,routeText){
 }
 const ROUTES = {
   "仁川國際機場→K-Grand Hostel":
-    "🚈 機場鐵路 A'REX 從 인천공항1터미널역 到 공덕역，轉 5 號線（紫）往 왕십리 方向到 왕십리역，步行至旅館。約 1 小時 20 分。",
+    "🚈 機場快線 A'REX 從 仁川機場第一航廈站（인천공항1터미널역）搭到 孔德站（공덕역），轉 5 號線（紫）到 往十里站（왕십리역），步行至旅館。約 1 小時 20 分。",
   "K-Grand Hostel→首爾奧林匹克體操競技場 KSPO DOME":
-    "🚇 왕십리역 搭 5 號線（紫）往 마천／하남검단산 方向，到 올림픽공원역，3 號出口步行約 5 分。約 25 分。",
+    "🚇 從 往十里站（왕십리역）搭 5 號線（紫）往 馬川／河南黔丹山（마천／하남검단산）方向，到 奧林匹克公園站（올림픽공원역）3 號出口，步行約 5 分。約 25 分。",
   "首爾奧林匹克體操競技場 KSPO DOME→K-Grand Hostel":
-    "🚇 올림픽공원역 搭 5 號線（紫）往 방화 方向，回到 왕십리역。約 25 分。",
+    "🚇 從 奧林匹克公園站（올림픽공원역）搭 5 號線（紫）往 傍花（방화）方向，回到 往十里站（왕십리역）。約 25 分。",
   "Hetras 聖水洞→K-Grand Hostel":
-    "🚇 성수역 搭 2 號線（綠）往 시청 方向，3 站到 왕십리역。約 6 分。",
+    "🚇 從 聖水站（성수역）搭 2 號線（綠）往 市廳（시청）方向，3 站到 往十里站（왕십리역）。約 6 分。",
   "K-Grand Hostel→樂天世界購物中心":
-    "🚇 왕십리역 搭 2 號線（綠）往 건대입구·잠실 方向到 잠실역，站內直通樂天世界。約 20 分。",
+    "🚇 從 往十里站（왕십리역）搭 2 號線（綠）往 建大入口（건대입구）·蠶室（잠실）方向到 蠶室站（잠실역），站內直通樂天世界。約 20 分。",
   "樂天世界購物中心→仁川國際機場":
-    "🚈 잠실역 搭 2 號線（綠）到 홍대입구역，轉機場鐵路 A'REX 到 인천공항1터미널역。約 1 小時 40 分，務必預留時間。",
+    "🚈 從 蠶室站（잠실역）搭 2 號線（綠）到 弘大入口站（홍대입구역），轉機場快線 A'REX 到 仁川機場第一航廈站（인천공항1터미널역）。約 1 小時 40 分，務必預留時間。",
 };
 function renderStops(stops){
   let out = "";
@@ -242,9 +242,9 @@ const KSPO  = "KSPO DOME 올림픽체조경기장";
 
 const DATA = [
   {date:"2026/08/12", stops:[
-    ["17:00","桃園國際機場 · 報到","第一航廈 T1｜提前 3 小時抵達機場",""],
+    ["17:00","桃園國際機場 · 報到","第一航廈 T1｜提前 3 小時抵達機場","桃園國際機場"],
     ["20:00","IT602 ✈ 桃園 TPE → 仁川 ICN","虎航 tigerair｜20:00 起飛 → 23:30 抵達"],
-    ["23:30","仁川國際機場 · 抵達","第一航廈 T1",""],
+    ["23:30","仁川國際機場 · 抵達","第一航廈 T1","인천국제공항"],
   ]},
   {date:"2026/08/13", stops:[
     ["01:35","Darakhyu 膠囊旅館（仁川國際機場第一航廈 T1）","入住 20:00 後 · 房間 12 小時制（超時每小時 +₩10,000）· ☎ 032-743-5000",""],
