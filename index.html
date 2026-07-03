@@ -176,11 +176,12 @@ function toggleMap(btn){
     btn.classList.remove("on");
   }
 }
-function placeCard(t,name,note,q,hideMap,plan){
+function placeCard(t,name,note,q,hideMap,plan,opt){
   const enc = encodeURIComponent;
-  const naver = /桃園|Taoyuan|TPE/.test(q) ? "" : `<a class="btn naver" href="https://map.naver.com/p/search/${enc(q)}" target="_blank" rel="noopener">Naver map</a>`;
+  const nq = (opt && opt.naverQ) ? opt.naverQ : q;
+  const naver = /桃園|Taoyuan|TPE/.test(q) ? "" : `<a class="btn naver" href="https://map.naver.com/p/search/${enc(nq)}" target="_blank" rel="noopener">Naver map</a>`;
   const planBox = plan ? `<div class="actions">
-            <button class="btn plan" onclick="toggleMap(this)">🏨 旅館位置圖</button>
+            <button class="btn plan" onclick="toggleMap(this)">旅館位置圖</button>
           </div>
           <div class="mappanel" hidden>${plan}</div>` : "";
   const box = (q && !hideMap) ? `<div class="actions">
@@ -209,7 +210,7 @@ function moveCard(fromName,toName,fromQ,toQ,routeText){
           <div class="move-title">🚇 移動 · ${shortName(fromName)} → ${shortName(toName)}</div>
           ${routeText ? `<div class="route-note">${routeText}</div>` : ""}
           <div class="actions">
-            <button class="btn maptoggle route" onclick="toggleMap(this)">🗺️ 路線圖</button>
+            <button class="btn maptoggle route" onclick="toggleMap(this)">路線圖</button>
           </div>
           <div class="mappanel" hidden>
             <iframe class="map route" data-src="https://maps.google.com/maps?saddr=${enc(fromQ)}&daddr=${enc(toQ)}&dirflg=r&output=embed" loading="lazy"></iframe>
@@ -219,21 +220,23 @@ function moveCard(fromName,toName,fromQ,toQ,routeText){
 }
 const ROUTES = {
   "仁川國際機場→K-Grand Hostel":
-    "機場快線 A'REX 從 仁川機場第一航廈站（인천공항1터미널역）搭到 孔德站（공덕역）。<br>轉乘 京義·中央線（青綠）直達 往十里站（왕십리역）。<br>11 號出口步行約 326m，5 分至旅館。<br>※ 孔德站轉乘一次、約 8 站，全程約 1 小時 15 分。",
+    "機場快線 A'REX 從 仁川機場第一航廈站（인천공항1터미널역）搭到 弘大入口站（홍대입구역）。<br>轉乘 2 號線（綠）往 市廳（시청）方向到 上往十里站（상왕십리역）。<br>步行至旅館，約223m。<br>※ 弘大入口轉乘一次，全程約 1 小時 20 分。",
   "K-Grand Hostel→K-Star Road 狎鷗亭":
     "往十里站（왕십리역）搭 水仁·盆唐線（黃）到 狎鷗亭羅德奧站（압구정로데오역）。<br>2 號出口步行約 68m 即達 K-스타로드，約 10 分。",
   "K-Star Road 狎鷗亭→Gen.G esports":
     "狎鷗亭羅德奧站（압구정로데오역）搭 水仁·盆唐線（黃）到 宣靖陵站（선정릉역）。<br>1 號出口步行約 370m，約 12 分。",
   "Gen.G esports→T1 Cafe & Arena":
     "兩處都在 宣靖陵站（선정릉역）1 號出口附近，步行約 300m（5 分內）即到。",
-  "T1 Cafe & Arena→Hetras 聖水洞":
+  "T1 Cafe & Arena→聖水洞":
     "宣靖陵站（선정릉역）搭 水仁·盆唐線（黃）直達 首爾林站（서울숲역，성수동）。<br>出站步行前往聖水洞，約 12 分、免轉乘。",
   "K-Grand Hostel→首爾奧林匹克體操競技場 KSPO DOME":
     "往十里站（왕십리역）搭 5 號線（紫）往 馬川／河南黔丹山（마천／하남검단산）方向，到 奧林匹克公園站（올림픽공원역）。<br>3 號出口步行約 5 分，約 25 分。",
   "首爾奧林匹克體操競技場 KSPO DOME→K-Grand Hostel":
     "奧林匹克公園站（올림픽공원역）搭 5 號線（紫）往 傍花（방화）方向，回到 往十里站（왕십리역）。<br>11 號出口步行至旅館，共約 25 分",
-  "Hetras 聖水洞→K-Grand Hostel":
-    "聖水站（성수역）搭 2 號線（綠）往 市廳（시청）方向，到 往十里站（왕십리역），約 3 站。",
+  "首爾奧林匹克體操競技場 KSPO DOME→큰손닭강정 왕십리점":
+    "奧林匹克公園站（올림픽공원역）搭 5 號線（紫）往 傍花（방화）方向回到 往十里站（왕십리역）。<br>11 號出口步行約 238m 到炸雞店。<br>※ 約 25 分。",
+  "큰손닭강정 왕십리점→K-Grand Hostel":
+    "提著炸雞從 往十里站（왕십리역）步行回旅館，約 5–8 分。",
   "晚餐．닭한마리뚝닭 성수본점→K-Grand Hostel":
     "聖水站（성수역）搭 2 號線（綠）往 市廳（시청）方向到 往十里站（왕십리역）。<br>※ 約 3 站、6 分。",
   "K-Grand Hostel→樂天世界購物中心":
@@ -244,19 +247,35 @@ const ROUTES = {
     "往十里站（왕십리역）搭 5 號線（紫）到 鍾路3街站（종로3가역）。<br>轉乘 3 號線（橘）到 景福宮站（경복궁역），5 號出口即達。<br>※ 轉乘一次，約 25 分。",
   "景福宮 경복궁→益善洞韓屋街 익선동":
     "景福宮站（경복궁역）搭 3 號線（橘）到 鍾路3街站（종로3가역）。<br>4 號出口步行約 2 分即到益善洞。<br>※ 幾乎免走路，約 12 分。",
+  "景福宮 경복궁→맥도날드 종로3가점":
+    "景福宮站（경복궁역）搭 3 號線（橘）到 鍾路3街站（종로3가역）。<br>麥當勞就在 종로大街上（종로 115）。<br>※ 約 12 分。",
+  "맥도날드 종로3가점→益善洞韓屋街 익선동":
+    "從麥當勞往北走 3–5 分（종로3가역 4/6번 출구方向）即到益善洞。",
   "益善洞韓屋街 익선동→廣藏市場 광장시장":
     "步行約 12 分（往鍾路5街방향）。<br>※ 或 鍾路3街站（종로3가역）搭 1 號線 1 站到 鍾路5街站（종로5가역），廣藏市場就在旁邊。",
   "廣藏市場 광장시장→得正 烏龍茶":
     "廣藏市場旁 鍾路5街站（종로5가역）搭 1 號線 2 站到 鍾閣站（종각역）。<br>1 號出口步行約 3 分即到得正，約 10 分。",
   "得正 烏龍茶→K-Grand Hostel":
     "鍾閣站（종각역）搭 1 號線到 鍾路3街站（종로3가역）。<br>轉乘 5 號線（紫）回 往十里站（왕십리역）。<br>※ 約 20 分。",
+  "K-Grand Hostel→신부자식당":
+    "往十里站（왕십리역）搭 水仁·盆唐線（黃）到 宣陵站（선릉역），轉 2 號線（綠）到 江南站（강남역）。<br>11 號出口步行約 129m。<br>※ 轉乘一次，約 30 分。",
+  "신부자식당→K-Grand Hostel":
+    "江南站（강남역）搭 2 號線（綠）到 宣陵站（선릉역），轉 水仁·盆唐線（黃）回 往十里站（왕십리역）。<br>※ 約 30 分。",
+  "K-Grand Hostel→보신각":
+    "往十里站（왕십리역）搭 5 號線（紫）到 鍾路3街站（종로3가역），轉 1 號線到 鍾閣站（종각역）。<br>4 號出口步行 63m 即達普信閣。<br>※ 轉乘一次，約 20 分。",
+  "보신각→치지직 롤파크":
+    "就在 鍾閣站（종각역）旁，步行約 2–3 分即到（보신각 4번 ↔ 롤파크 1번 출구）。",
+  "치지직 롤파크→롯데백화점 서울역":
+    "鍾閣站（종각역）搭 1 號線 2 站到 首爾站（서울역）。<br>樂天百貨與機場快線 A'REX 都在站內。<br>※ 約 10 分。",
+  "롯데백화점 서울역→仁川國際機場":
+    "逛完直接在 首爾站（서울역）搭 機場快線 A'REX 到 仁川機場第一航廈站（인천공항1터미널역）。<br>※ 直達車約 50 分，務必預留時間。",
 };
 function renderStops(stops){
   let out = "";
   stops.forEach((s,idx)=>{
     const [t,name,note,q,hideMap,plan] = s;
     const opt = s[6] || {};
-    out += placeCard(t,name,note,q,hideMap,plan);
+    out += placeCard(t,name,note,q,hideMap,plan,opt);
     const nx = stops[idx+1];
     if(nx && q && nx[3] && q!==nx[3] && !(nx[6] && nx[6].noMoveIn)){
       const key = shortName(name) + "→" + shortName(nx[1]);
@@ -303,16 +322,17 @@ const DATA = [
     ["01:35","Darakhyu 膠囊旅館（仁川國際機場第一航廈 T1）","入住 20:00 後 · 房間 12 小時制（超時每小時 +₩10,000）· ☎ 032-743-5000","",0,DARAKHYU_PLAN],
     ["08:00","仁川國際機場（第一航廈 T1）","",ICN_STA,true],
     ["10:53","K-Grand Hostel（DDM, Wangsimni）","🧳 放行李（先寄放行李，再出門）",HOSTEL],
-    ["11:10","K-Star Road 狎鷗亭","🐻 找 INFINITE 熊雕像（K-스타로드 강남돌）","서울 강남구 압구정동 394"],
+    ["11:10","K-Star Road 狎鷗亭","🐻 找 INFINITE 熊雕像（K-스타로드 강남돌）","37.527934,127.0409421",0,0,{naverQ:"서울 강남구 압구정동 394"}],
     ["11:36","Gen.G esports","🎴 拿皮克敏明信片","서울 강남구 봉은사로49길 38"],
     ["11:56","T1 Cafe & Arena","買","서울 강남구 선릉로115길 4"],
-    ["13:25","Hetras 聖水洞","","Hetras 성수동"],
+    ["13:25","聖水洞","","성수동"],
     ["15:00","晚餐．닭한마리뚝닭 성수본점","성수역 4 號出口 47m。","닭한마리뚝닭 성수본점",0,0,{noMoveIn:true,moveAs:"聖水洞"}],
     ["17:15","K-Grand Hostel（DDM, Wangsimni）","",HOSTEL],
   ]},
   {date:"2026/08/14", stops:[
     ["00:00","K-Grand Hostel（DDM, Wangsimni）","",HOSTEL],
     ["10:38","首爾奧林匹克體操競技場 KSPO DOME","",KSPO],
+    ["22:20","큰손닭강정 왕십리점（大手炸雞 往十里店）","🍗 演唱會後回飯店前買炸雞 · 왕십리역 11번 출구 238m","큰손닭강정 왕십리점"],
     ["22:38","K-Grand Hostel（DDM, Wangsimni）","",HOSTEL],
   ]},
   {date:"2026/08/15", stops:[
@@ -328,14 +348,19 @@ const DATA = [
   {date:"2026/08/17", stops:[
     ["00:00","K-Grand Hostel（DDM, Wangsimni）","",HOSTEL],
     ["11:00","景福宮 경복궁","👑 輕鬆逛主殿＋守門將換崗即可（不必走完全園）· 8月炎熱記得補水遮陽","경복궁"],
-    ["12:30","益善洞韓屋街 익선동","🍜🧊 午餐＋韓屋咖啡，吹冷氣、室內慢慢坐（緊鄰仁寺洞）","익선동 한옥거리"],
-    ["14:00","廣藏市場 광장시장","🥘 小吃天堂（綠豆煎餅・生牛肉・麻藥飯捲）｜💊 順逛周邊藥局買 reju ran 眼藥水、孫興慜代言藥膏（可跟藥師說 안약）","광장시장"],
+    ["12:30","맥도날드 종로3가점（麥當勞）","🍔 午餐（正餐）· 종로3가역旁（종로 115）","맥도날드 종로3가점"],
+    ["13:30","益善洞韓屋街 익선동","🧊 韓屋咖啡＋散步、吹冷氣休息（緊鄰仁寺洞）","익선동 한옥거리"],
+    ["14:30","廣藏市場 광장시장","🥘 小吃天堂（綠豆煎餅・生牛肉・麻藥飯捲）｜💊 順逛周邊藥局買 reju ran 眼藥水、孫興慜代言藥膏（可跟藥師說 안약）","광장시장"],
     ["15:30","得正 烏龍茶（종각店）","🧋 喝杯烏龍茶歇腳（近 종각역）","서울 종로구 종로 33"],
-    ["16:15","K-Grand Hostel（DDM, Wangsimni）","🛏️ 回旅館休息、晚上自由",HOSTEL],
+    ["16:15","K-Grand Hostel（DDM, Wangsimni）","🛏️ 回旅館休息",HOSTEL],
+    ["18:30","신부자식당（新富者食堂）","🍽️ 晚餐 · 강남역 11번 출구 129m","신부자식당 강남"],
+    ["20:30","K-Grand Hostel（DDM, Wangsimni）","",HOSTEL],
   ]},
   {date:"2026/08/18", stops:[
     ["00:00","K-Grand Hostel（DDM, Wangsimni）","",HOSTEL],
-    ["11:33","樂天世界購物中心","","롯데월드몰"],
+    ["10:00","보신각（普信閣）","🔔 종각역 4번 출구 63m","보신각"],
+    ["11:00","치지직 롤파크","🎮 CHZZK · LoL PARK（종각역 1번 출구 93m）","롤파크 그랑서울"],
+    ["13:30","롯데백화점 서울역（樂天百貨 首爾站）","🛍️ 逛街＋午餐，站內直通機場快線","롯데백화점 서울역점"],
     ["21:30","仁川國際機場 · 報到","第一航廈 T1｜提前 3 小時（航班 00:30 起飛）",ICN_STA,true],
   ]},
   {date:"2026/08/19", stops:[
